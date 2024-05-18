@@ -1,0 +1,108 @@
+﻿@page "/prestamos"
+@rendermode InteractiveServer
+@using BD.Modelos.Repositorio
+@using BD.Modelos
+
+@inject NavigationManager Navegador
+@inject IRepositorio Repositorio
+
+<PageTitle>Préstamos</PageTitle>
+
+<h1>Lista de préstamos realizados</h1>
+
+<a class="btn btn-success" href="prestamos/nuevo">Registrar nuevo préstamo</a>
+
+@if (_prestamos != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Fecha inicial</th>
+                <th>Fecha de entrega</th>
+                <th>Duracion en días</th>
+                <th>Cliente</th>
+                <th>Libro</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+                <th>Multas</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prestamo in _prestamos)
+            {
+                <tr>
+                    <td>@prestamo.Id</td>
+                    <td>@prestamo.FechaPrestamo</td>
+                    <td>@prestamo.FechaEntrega</td>
+                    <td>@prestamo.Duracion</td>
+                    <td>@ObtenerNombre(prestamo.ClienteId)</td>
+                    <td>@ObtenerTitulo(prestamo.LibroId)</td>
+                    <td>@if(@prestamo.Completado){<p>Completado</p>} else {<p>No completado</p>}</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="()=>EditarPrestamo(prestamo.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="()=>EliminarPrestamo(prestamo)">Eliminar</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="()=>VerMultas(prestamo.Id)">Ver multas</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+    private List<Prestamo>? _prestamos;
+    private List<Cliente>? _clientes;
+    private List<Libro>? _libros;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _prestamos = await Repositorio.GetAllPrestamos();
+        _clientes = await Repositorio.GetAllClientes();
+        _libros = await Repositorio.GetAllLibros();
+    }
+
+    private async void EliminarPrestamo(Prestamo prestamo)
+    {
+        await Repositorio.DeletePrestamo(prestamo.Id);
+        _prestamos!.Remove(prestamo);
+        StateHasChanged();
+    }
+
+    private string ObtenerNombre(int id)
+    {
+        return _clientes.Find((c) => c.Id == id)!.Nombre + " " + _clientes.Find((c) => c.Id == id)!.Apellido;
+    }
+
+    private string ObtenerTitulo(int id)
+    {
+        return _libros.Find((l) => l.Id == id)!.Titulo;
+    }
+
+    private async Task<Cliente> ObtenerCliente(int id)
+    {
+        return await Repositorio.GetCliente(id);
+    }
+
+    private void EditarPrestamo(int id)
+    {
+        Navegador.NavigateTo($"prestamos/editar/{id}");
+    }
+
+    private void NuevoPrestamo()
+    {
+        Navegador.NavigateTo("prestamos/nuevo");
+    }
+
+    private void VerMultas(int id)
+    {
+        Navegador.NavigateTo($"prestamos/multas/{id}");
+    }
+}

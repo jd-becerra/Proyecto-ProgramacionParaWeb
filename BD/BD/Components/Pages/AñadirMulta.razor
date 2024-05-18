@@ -1,0 +1,65 @@
+﻿@page "/multas/nuevo/{prestamoId}"
+@rendermode InteractiveServer
+@using BD.Modelos.Repositorio
+@using BD.Modelos
+@inject NavigationManager Navegador
+@inject IRepositorio Repositorio
+
+<PageTitle>Añadir Multa</PageTitle>
+<h3>Ingrese los datos de la multa para el préstamo con id: @prestamoId</h3>
+
+@if (multa == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <EditForm Model="@multa" OnValidSubmit="GuardarMulta">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="FechaCreacion">Fecha Inicial</label>
+            <InputDate id="FechaCreacion" class="form-control" @bind-Value="multa.FechaCreacion" />
+            <ValidationMessage For="@(() => multa.FechaCreacion)" />
+        </div>
+
+        <div class="form-group">
+                    <label for="FechaPago">Fecha de Pago</label>
+                    <InputDate id="FechaPago" class="form-control" @bind-Value="multa.FechaPago" />
+                    <ValidationMessage For="@(() => multa.FechaPago)" />
+        </div>
+
+        <div class="form-group">
+                    <label for="Monto">Monto</label>
+                    <InputNumber id="Monto" class="form-control" @bind-Value="multa.Monto" />
+                    <ValidationMessage For="@(() => multa.Monto)" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </EditForm>
+}
+
+@code {
+    private Multa multa = new Multa();
+
+    [Parameter]
+    public string? prestamoId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        multa.Completado = false;
+        multa.PrestamoId = int.Parse(prestamoId);
+    }
+
+    private void VerPrestamo(int id)
+    {
+        Navegador.NavigateTo($"/prestamos/{id}");
+    }
+
+    private async void GuardarMulta()
+    {
+        await Repositorio.AddMulta(multa);
+        Navegador.NavigateTo($"/prestamos/multas/{prestamoId}");
+    }
+}

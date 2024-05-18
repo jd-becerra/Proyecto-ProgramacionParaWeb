@@ -1,0 +1,58 @@
+﻿@page "/multas/prestamo/{id}"
+@rendermode InteractiveServer
+@using BD.Modelos.Repositorio
+@using BD.Modelos
+
+@inject NavigationManager Navegador
+@inject IRepositorio Repositorio
+
+<PageTitle>Préstamo de la prestamo</PageTitle>
+<a class="btn btn-success" href="multas">Regresar</a>
+
+<h1>Visualización de préstamo con ID: @id</h1>
+@if (prestamo != null)
+{
+    <div>
+        <p>Id: @prestamo.Id</p>
+        <p>Fecha inicial: @prestamo.FechaPrestamo</p>
+        <p>Fecha de entrega: @prestamo.FechaEntrega</p>
+        <p>Duración en días: @prestamo.Duracion</p>
+        <p>
+            Estado: @if (@prestamo.Completado)
+            {
+            <p>Pagado</p>
+            }
+            else
+            {
+            <p>No pagado</p>
+            }</p>
+        <p>Cliente: @_cliente.Nombre @_cliente.Apellido</p>
+        <p>Libro: @_libro.Titulo</p>
+    </div>
+} else
+{
+    <p><em>Cargando...</em></p>
+}
+
+@code {
+    private Prestamo prestamo = new Prestamo();
+    private Cliente _cliente = new Cliente();
+    private Libro _libro = new Libro();
+
+    [Parameter]
+    public string? id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        prestamo = await Repositorio.GetPrestamo(int.Parse(id));
+        _cliente = await Repositorio.GetCliente(prestamo.ClienteId);
+        _libro = await Repositorio.GetLibro(prestamo.LibroId);
+    }
+
+    private async Task<string> ObtenerTitulo(int id)
+    {
+        Libro? libro = await Repositorio.GetLibro(id);
+        return libro.Titulo;
+    }
+
+}

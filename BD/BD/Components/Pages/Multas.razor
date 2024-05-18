@@ -1,0 +1,86 @@
+﻿@page "/multas"
+@rendermode InteractiveServer
+@using BD.Modelos.Repositorio
+@using BD.Modelos
+
+@inject NavigationManager Navegador
+@inject IRepositorio Repositorio
+
+<PageTitle>Préstamos</PageTitle>
+
+<h1>Esta página muestra la lista de todas las multas registradas en el sistema</h1>
+<h2>Visite la página de registro de préstamos para añadir, editar o eliminar una multa</h2>
+
+@if (_multas != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Fecha inicial</th>
+                <th>Fecha límite</th>
+                <th>Monto</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var multa in _multas)
+            {
+                <tr>
+                    <td>@multa.Id</td>
+                    <td>@multa.FechaCreacion</td>
+                    <td>@multa.FechaPago</td>
+                    <td>@multa.Monto</td>
+                    <td>
+                        @if (multa.Completado)
+                        {
+                            <p>Pagado</p>
+                        }
+                        else
+                        {
+                            <p>No pagado</p>
+                        }
+                    </td>
+                    <td><button class="btn btn-primary" @onclick="()=>VerPrestamo(multa.PrestamoId)">Visualizar préstamo correspondiente</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><em>Cargando...</em></p>
+}
+
+@code {
+    private List<Multa>? _multas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _multas = await Repositorio.GetAllMultas();
+    }
+
+    private async void EliminarMulta(Multa multa)
+    {
+        await Repositorio.DeleteMulta(multa.Id);
+        _multas!.Remove(multa);
+        StateHasChanged();
+    }
+
+
+    private void EditarMulta(int id)
+    {
+        Navegador.NavigateTo($"multas/editar/{id}");
+    }
+
+    private void NuevoMulta()
+    {
+        Navegador.NavigateTo("multas/nuevo");
+    }
+
+    private void VerPrestamo(int id)
+    {
+        Navegador.NavigateTo($"multas/prestamo/{id}");
+    }
+}

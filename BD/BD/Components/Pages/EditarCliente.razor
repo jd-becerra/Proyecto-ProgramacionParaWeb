@@ -1,0 +1,69 @@
+﻿@page "/clientes/editar/{id}"
+@rendermode InteractiveServer
+@using BD.Modelos.Repositorio
+@using BD.Modelos
+@inject NavigationManager Navegador
+@inject IRepositorio Repositorio
+
+<PageTitle>Editar Cliente</PageTitle>
+<h3>Ingrese los nuevos datos del cliente</h3>
+
+<EditForm Model="@cliente" OnValidSubmit="GuardarCliente">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <InputText id="nombre" class="form-control" @bind-Value="cliente.Nombre" />
+        <ValidationMessage For="@(() => cliente.Nombre)" />
+    </div>
+
+    <div class="form-group">
+        <label for="apellido">Apellido</label>
+        <InputText id="apellido" class="form-control" @bind-Value="cliente.Apellido" />
+        <ValidationMessage For="@(() => cliente.Apellido)" />
+    </div>
+
+    <div class="form-group">
+        <label for="apellido">Teléfono</label>
+        <InputText id="telefono" class="form-control" @bind-Value="cliente.Teléfono" />
+        <ValidationMessage For="@(() => cliente.Teléfono)" />
+    </div>
+
+    <div class="form-group">
+        <label for="correo">Correo</label>
+        <InputText id="correo" class="form-control" @bind-Value="cliente.Correo" />
+        <ValidationMessage For="@(() => cliente.Correo)" />
+    </div>
+
+    <div class="form-group">
+        <label for="direccion">Dirección</label>
+        <InputText id="direccion" class="form-control" @bind-Value="cliente.Dirección" />
+        <ValidationMessage For="@(() => cliente.Dirección)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@code {
+    private EditContext? _editContext;
+
+    [Parameter]
+    public string? id { get; set; }
+
+    private Cliente cliente = new Cliente();
+
+    protected override async Task OnInitializedAsync()
+    {
+        cliente = await Repositorio.GetCliente(int.Parse(id));
+        _editContext = new EditContext(cliente);
+    }
+
+    private async void GuardarCliente()
+    {
+        if (!_editContext.Validate()) return;
+
+        await Repositorio.UpdateCliente(cliente);
+        Navegador.NavigateTo("/clientes");
+    }
+}

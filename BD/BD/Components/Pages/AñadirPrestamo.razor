@@ -1,0 +1,80 @@
+﻿@page "/prestamos/nuevo"
+@rendermode InteractiveServer
+@using BD.Modelos.Repositorio
+@using BD.Modelos
+@inject NavigationManager Navegador
+@inject IRepositorio Repositorio
+
+@if (_clientes == null || _libros == null)
+{
+    <p>Cargando...</p>
+}
+else {
+<PageTitle>Añadir Prestamo</PageTitle>
+<h3>Ingrese los datos del Prestamo</h3>
+
+<EditForm Model="@prestamo" OnValidSubmit="GuardarPrestamo">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+            <label for="ClienteId">Cliente</label>
+            <InputSelect id="ClienteId" class="form-control" @bind-Value="prestamo.ClienteId">
+                @foreach (var cliente in _clientes)
+                {
+                    <option value="@cliente.Id">@cliente.Nombre @cliente.Apellido</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => prestamo.ClienteId)" />
+    </div>
+
+    <div class="form-group">
+                <label for="LibroId">Libro</label>
+                <InputSelect id="LibroId" class="form-control" @bind-Value="prestamo.LibroId">
+                    @foreach (var libro in _libros)
+                    {
+                        <option value="@libro.Id">@libro.Titulo</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => prestamo.LibroId)" />
+    </div>
+
+    <div class="form-group">
+        <label for="FechaPrestamo">Fecha Inicial</label>
+        <InputDate id="FechaPrestamo" class="form-control" @bind-Value="prestamo.FechaPrestamo" />
+        <ValidationMessage For="@(() => prestamo.FechaPrestamo)" />
+    </div>
+
+    <div class="form-group">
+            <label for="FechaEntrega">Fecha de entrega</label>
+            <InputDate id="FechaEntrega" class="form-control" @bind-Value="prestamo.FechaEntrega" />
+    <ValidationMessage For="@(() => prestamo.FechaEntrega)" />
+    </div>
+
+    <div class="form-group">
+            <label for="Duracion">Duracion del Prestamo (en días)</label>
+            <InputNumber id="Duracion" class="form-control" @bind-Value="prestamo.Duracion" />
+    <ValidationMessage For="@(() => prestamo.Duracion)" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+}
+@code {
+    private Prestamo prestamo = new Prestamo();
+    private List<Cliente>? _clientes;
+    private List<Libro>? _libros;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        prestamo.Completado = false;
+        _clientes = await Repositorio.GetAllClientes();
+        _libros = await Repositorio.GetAllLibros();
+    }
+
+    private async void GuardarPrestamo()
+    {
+        await Repositorio.AddPrestamo(prestamo);
+        Navegador.NavigateTo("/prestamos");
+    }
+}

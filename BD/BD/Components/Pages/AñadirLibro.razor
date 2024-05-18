@@ -1,0 +1,74 @@
+﻿@page "/libros/nuevo"
+@rendermode InteractiveServer
+@using BD.Modelos.Repositorio
+@using BD.Modelos
+@inject NavigationManager Navegador
+@inject IRepositorio Repositorio
+
+<PageTitle>Añadir Libro</PageTitle>
+<h3>Ingrese los datos del libro</h3>
+
+<EditForm Model="@libro" OnValidSubmit="GuardarLibro">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="titulo">Titulo</label>
+        <InputText id="titulo" class="form-control" @bind-Value="libro.Titulo" />
+        <ValidationMessage For="@(() => libro.Titulo)" />
+    </div>
+
+    <div class="form-group">
+        <label for="genero">Género</label>
+        <InputText id="genero" class="form-control" @bind-Value="libro.Genero" />
+        <ValidationMessage For="@(() => libro.Genero)" />
+    </div>
+
+    <div class="form-group">
+        <label for="autor">Autor</label>
+        <InputText id="autor" class="form-control" @bind-Value="libro.Autor" />
+        <ValidationMessage For="@(() => libro.Autor)" />
+    </div>
+
+    <div class="form-group">
+        <label for="año">Año de publicación</label>
+        <InputNumber id="año" class="form-control" @bind-Value="libro.Año" />
+        <ValidationMessage For="@(() => libro.Año)" />
+    </div>
+
+    <div class="form-group">
+        <label for="edicion">Número de Edición</label>
+        <InputNumber id="edicion" class="form-control" @bind-Value="libro.Edicion" />
+        <ValidationMessage For="@(() => libro.Edicion)" />
+    </div>
+
+    <div class="form-group">
+        <label for="editorial">Editorial</label>
+        <InputText id="editorial" class="form-control" @bind-Value="libro.Editorial" />
+        <ValidationMessage For="@(() => libro.Editorial)" />
+    </div>
+
+    <div class="form-group">
+        <label for="isbn">ISBN</label>
+        <InputText id="isbn" class="form-control" @bind-Value="libro.ISBN" />
+        <ValidationMessage For="@(() => libro.ISBN)" />
+    </div>
+
+    <div class="form-group">
+        <label for="cantidad">Cantidad de unidades disponibles</label>
+        <InputNumber id="cantidad" class="form-control" @bind-Value="libro.Cantidad" />
+        <ValidationMessage For="@(() => libro.Cantidad)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@code {
+    private Libro libro = new Libro();
+
+    private async void GuardarLibro()
+    {
+        await Repositorio.AddLibro(libro);
+        Navegador.NavigateTo("/libros");
+    }
+}

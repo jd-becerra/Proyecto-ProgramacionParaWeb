@@ -1,0 +1,80 @@
+﻿@page "/libros"
+@rendermode InteractiveServer
+@using BD.Modelos.Repositorio
+@using BD.Modelos
+
+@inject NavigationManager Navegador
+@inject IRepositorio Repositorio
+
+<PageTitle>Libros</PageTitle>
+
+<h1>Lista de libros disponibles</h1>
+
+<a class="btn btn-success" href="libros/nuevo">Añadir Libro</a>
+
+@if (_libros != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Título</th>
+                <th>Género</th>
+                <th>Autor</th>
+                <th>Año de publicación</th>
+                <th>Número de Edición</th>
+                <th>Editoral</th>
+                <th>ISBN</th>
+                <th>Cantidad de unidades disponibles</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var libro in _libros)
+            {
+                <tr>
+                    <td>@libro.Id</td>
+                    <td>@libro.Titulo</td>
+                    <td>@libro.Genero</td>
+                    <td>@libro.Autor</td>
+                    <td>@libro.Año</td>
+                    <td>@libro.Edicion</td>
+                    <td>@libro.Editorial</td>
+                    <td>@libro.ISBN</td>
+                    <td>@libro.Cantidad</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="()=>EditarLibro(libro.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="()=>EliminarLibro(libro)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+    private List<Libro>? _libros;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _libros = await Repositorio.GetAllLibros();
+    }
+
+    private async void EliminarLibro(Libro libro)
+    {
+        await Repositorio.DeleteLibro(libro.Id);
+        _libros!.Remove(libro);
+        StateHasChanged();
+    }
+
+private void EditarLibro(int id)
+    {
+        Navegador.NavigateTo($"libros/editar/{id}");
+    }
+
+}

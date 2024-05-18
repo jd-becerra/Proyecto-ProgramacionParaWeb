@@ -1,0 +1,73 @@
+﻿@page "/clientes"
+@rendermode InteractiveServer
+@using BD.Modelos.Repositorio
+@using BD.Modelos
+
+@inject NavigationManager Navegador
+@inject IRepositorio Repositorio
+
+<PageTitle>Clientes</PageTitle>
+
+<h1>Lista de clientes disponibles</h1>
+
+<a class="btn btn-success" href="clientes/nuevo">Añadir Cliente</a>
+
+@if (_clientes != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Telefono</th>
+                <th>Correo</th>
+                <th>Direccion</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cliente in _clientes)
+            {
+                <tr>
+                    <td>@cliente.Id</td>
+                    <td>@cliente.Nombre</td>
+                    <td>@cliente.Apellido</td>
+                    <td>@cliente.Teléfono</td>
+                    <td>@cliente.Correo</td>
+                    <td>@cliente.Dirección</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="()=>EditarCliente(cliente.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="()=>EliminarCliente(cliente)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+    private List<Cliente>? _clientes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _clientes = await Repositorio.GetAllClientes();
+    }
+
+    private async void EliminarCliente(Cliente cliente)
+    {
+        await Repositorio.DeleteCliente(cliente.Id);
+        _clientes!.Remove(cliente);
+        StateHasChanged();
+    }
+
+private void EditarCliente(int id)
+    {
+        Navegador.NavigateTo($"clientes/editar/{id}");
+    }
+
+}
