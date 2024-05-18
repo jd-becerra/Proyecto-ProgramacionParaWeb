@@ -1,4 +1,6 @@
-IMPLEMENTACIÓN DE UN SISTEMA DE BIBLIOTECA
+# IMPLEMENTACIÓN DE UN SISTEMA DE BIBLIOTECA
+
+![Library-Management-System-513656000](https://github.com/jd-becerra/Proyecto-ProgramacionParaWeb/assets/112126654/f6365c33-f6d5-45f3-bff7-4c7b1084d68e)
 
 El caso que yo he elegido implementar involucra crear un sistema para llevar un control de los préstamos de los libros en una biblioteca. 
 
