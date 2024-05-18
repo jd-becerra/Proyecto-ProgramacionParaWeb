@@ -8,3 +8,6 @@ Ya creadas las tablas Cliente y Libro, nos disponemos a relacionarlas mediante u
 Además, añadiremos una tabla para registrar las posibles multas que un préstamo pueda tener si el libro no se regresó a tiempo.
 
 El diagrama de la base de datos del sistema en su totalidad es el siguiente:
+
+
+![image](https://github.com/jd-becerra/Proyecto-ProgramacionParaWeb/assets/112126654/9b8e752b-ab44-4bdd-b324-c010980c1a50)
