@@ -13,7 +13,10 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddScoped<IRepositorio, RepositorioClase>();
+builder.Services.AddScoped<IRepositorioCliente, RepositorioClaseCliente>();
+builder.Services.AddScoped<IRepositorioLibro, RepositorioClaseLibro>();
+builder.Services.AddScoped<IRepositorioPrestamo, RepositorioClasePrestamo>();
+builder.Services.AddScoped<IRepositorioMulta, RepositorioClaseMulta>();
 
 var app = builder.Build();
 

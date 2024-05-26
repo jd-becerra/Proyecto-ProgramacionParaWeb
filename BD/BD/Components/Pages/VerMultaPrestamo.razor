@@ -4,7 +4,9 @@
 @using BD.Modelos
 
 @inject NavigationManager Navegador
-@inject IRepositorio Repositorio
+@inject IRepositorioPrestamo RepositorioPrestamo
+@inject IRepositorioCliente RepositorioCliente
+@inject IRepositorioLibro RepositorioLibro
 
 <PageTitle>Préstamo de la prestamo</PageTitle>
 <a class="btn btn-success" href="multas">Regresar</a>
@@ -44,14 +46,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        prestamo = await Repositorio.GetPrestamo(int.Parse(id));
-        _cliente = await Repositorio.GetCliente(prestamo.ClienteId);
-        _libro = await Repositorio.GetLibro(prestamo.LibroId);
+        prestamo = await RepositorioPrestamo.GetPrestamo(int.Parse(id));
+        _cliente = await RepositorioCliente.GetCliente(prestamo.ClienteId);
+        _libro = await RepositorioLibro.GetLibro(prestamo.LibroId);
     }
 
     private async Task<string> ObtenerTitulo(int id)
     {
-        Libro? libro = await Repositorio.GetLibro(id);
+        Libro? libro = await RepositorioLibro.GetLibro(id);
         return libro.Titulo;
     }
 

@@ -4,7 +4,9 @@
 @using BD.Modelos
 
 @inject NavigationManager Navegador
-@inject IRepositorio Repositorio
+@inject IRepositorioPrestamo RepositorioPrestamo
+@inject IRepositorioCliente RepositorioCliente
+@inject IRepositorioLibro RepositorioLibro
 
 <PageTitle>Préstamos</PageTitle>
 
@@ -64,14 +66,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _prestamos = await Repositorio.GetAllPrestamos();
-        _clientes = await Repositorio.GetAllClientes();
-        _libros = await Repositorio.GetAllLibros();
+        _prestamos = await RepositorioPrestamo.GetAllPrestamos();
+        _clientes = await RepositorioCliente.GetAllClientes();
+        _libros = await RepositorioLibro.GetAllLibros();
     }
 
     private async void EliminarPrestamo(Prestamo prestamo)
     {
-        await Repositorio.DeletePrestamo(prestamo.Id);
+        await RepositorioPrestamo.DeletePrestamo(prestamo.Id);
         _prestamos!.Remove(prestamo);
         StateHasChanged();
     }
@@ -88,7 +90,7 @@ else
 
     private async Task<Cliente> ObtenerCliente(int id)
     {
-        return await Repositorio.GetCliente(id);
+        return await RepositorioCliente.GetCliente(id);
     }
 
     private void EditarPrestamo(int id)

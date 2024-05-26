@@ -3,7 +3,9 @@
 @using BD.Modelos.Repositorio
 @using BD.Modelos
 @inject NavigationManager Navegador
-@inject IRepositorio Repositorio
+@inject IRepositorioPrestamo RepositorioPrestamo
+@inject IRepositorioCliente RepositorioCliente
+@inject IRepositorioLibro RepositorioLibro
 
 @if (_clientes == null || _libros == null)
 {
@@ -78,9 +80,9 @@ else {
 
     protected override async Task OnInitializedAsync()
     {
-        prestamo = await Repositorio.GetPrestamo(int.Parse(id));
-        _clientes = await Repositorio.GetAllClientes();
-        _libros = await Repositorio.GetAllLibros();
+        prestamo = await RepositorioPrestamo.GetPrestamo(int.Parse(id));
+        _clientes = await RepositorioCliente.GetAllClientes();
+        _libros = await RepositorioLibro.GetAllLibros();
         _editContext = new EditContext(prestamo);
     }
 
@@ -88,7 +90,7 @@ else {
     {
         if (!_editContext.Validate()) return;
 
-        await Repositorio.UpdatePrestamo(prestamo);
+        await RepositorioPrestamo.UpdatePrestamo(prestamo);
         Navegador.NavigateTo("/prestamos");
     }
 }

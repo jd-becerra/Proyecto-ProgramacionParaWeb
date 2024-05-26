@@ -4,7 +4,8 @@
 @using BD.Modelos
 
 @inject NavigationManager Navegador
-@inject IRepositorio Repositorio
+@inject IRepositorioPrestamo RepositorioPrestamo
+@inject IRepositorioMulta RepositorioMulta
 
 <PageTitle>Préstamos</PageTitle>
 
@@ -65,12 +66,12 @@ else
     
     protected override async Task OnInitializedAsync()
     {
-        Prestamo p = await Repositorio.GetPrestamo(int.Parse(id));
+        Prestamo p = await RepositorioPrestamo.GetPrestamo(int.Parse(id));
         _multas = p.Multas;
     }
     private async void EliminarMulta(Multa multa)
     {
-        await Repositorio.DeleteMulta(multa.Id);
+        await RepositorioMulta.DeleteMulta(multa.Id);
         _multas!.Remove(multa);
         StateHasChanged();
     }
